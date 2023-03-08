@@ -1,0 +1,50 @@
+$cell-bg-white: lightgrey;
+$cell-bg-black: black;
+$cell-bg-hover: red;
+$cell-size-percentage-of-parent: 100% / 8;
+
+.board{
+	border: 1px solid black;
+	display: inline-block;
+	width: 500px;
+	height: 500px;
+	
+	.row{
+		display: flex;
+		height: $cell-size-percentage-of-parent;
+
+		.cell{
+			display:inline-block;
+			width: $cell-size-percentage-of-parent;
+			cursor: pointer;
+
+			&:hover{
+				background-color: $cell-bg-hover !important;
+			}
+		}
+
+		&:nth-child(odd){
+			.cell{
+				&:nth-child(odd){
+					background-color: $cell-bg-white;
+				}
+
+				&:nth-child(even){
+					background-color: $cell-bg-black;
+				}
+			}
+		}
+
+		&:nth-child(even){
+			.cell{
+				&:nth-child(even){
+					background-color: $cell-bg-white;
+				}
+
+				&:nth-child(odd){
+					background-color: $cell-bg-black;
+				}
+			}
+		}
+	}
+}

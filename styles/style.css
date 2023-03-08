@@ -1,0 +1,30 @@
+.board {
+  border: 1px solid black;
+  display: inline-block;
+  width: 500px;
+  height: 500px;
+}
+.board .row {
+  display: flex;
+  height: 12.5%;
+}
+.board .row .cell {
+  display: inline-block;
+  width: 12.5%;
+  cursor: pointer;
+}
+.board .row .cell:hover {
+  background-color: red !important;
+}
+.board .row:nth-child(odd) .cell:nth-child(odd) {
+  background-color: lightgrey;
+}
+.board .row:nth-child(odd) .cell:nth-child(even) {
+  background-color: black;
+}
+.board .row:nth-child(even) .cell:nth-child(even) {
+  background-color: lightgrey;
+}
+.board .row:nth-child(even) .cell:nth-child(odd) {
+  background-color: black;
+}
