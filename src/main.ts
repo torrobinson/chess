@@ -1,26 +1,22 @@
-function elementFromString(htmlString) {
-  var div = document.createElement('div');
-  div.innerHTML = htmlString.trim();
-  return div.firstChild;
-}
+import { HtmlUtilities } from "./utility/html-utilities";
 
-function generateBoard(){
+function generateBoard() {
 	// Clear the board holder of its board
 	boardHolder.innerHTML = '';
 
 	// Create a new board
-	let board = elementFromString('<div class="board"></div>');
+	let board = HtmlUtilities.elementFromString('<div class="board"></div>');
 
 	// For each row
-	for(let y = 1; y<=height; y++){
-		let newRow = elementFromString('<div class="row"></div>');
+	for (let y = 1; y <= height; y++) {
+		let newRow = HtmlUtilities.elementFromString('<div class="row"></div>');
 
 		// For each column
-		for(let x = 1; x<=width; x++){
+		for (let x = 1; x <= width; x++) {
 			newRow.appendChild(
-				elementFromString('<div class="cell"></div>')
+				HtmlUtilities.elementFromString('<div class="cell"></div>')
 			);
-		}	
+		}
 
 		board.appendChild(newRow);
 	}

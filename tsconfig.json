@@ -1,0 +1,11 @@
+{
+	"files": ["scripts/main.ts"],
+    "compilerOptions": {
+        "noImplicitAny": false,
+        "removeComments": true,
+        "preserveConstEnums": true,
+
+        "sourceMap": true,
+        "target": "es6"
+    }
+}

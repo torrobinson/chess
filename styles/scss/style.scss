@@ -1,7 +1,9 @@
+@use "sass:math";
+
 $cell-bg-white: lightgrey;
 $cell-bg-black: black;
 $cell-bg-hover: red;
-$cell-size-percentage-of-parent: 100% / 8;
+$cell-size-percentage-of-parent: math.div(100%, 8);
 
 .board{
 	border: 1px solid black;
