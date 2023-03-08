@@ -23,6 +23,11 @@ $cell-size-percentage-of-parent: math.div(100%, 8);
 			&:hover{
 				background-color: $cell-bg-hover !important;
 			}
+
+			/// TEMP for character display before sprites
+			font-size: 55px;
+			text-align: center;
+			color: grey;
 		}
 
 		&:nth-child(odd){

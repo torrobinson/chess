@@ -1,39 +1,18 @@
-import { HtmlUtilities } from "./utility/html-utilities";
+import { Game } from "./class/game";
+import { HtmlRenderer } from "./renderer/htmlRenderer";
+import { Renderer } from "./renderer/renderer";
 
-function generateBoard() {
-	// Clear the board holder of its board
-	boardHolder.innerHTML = '';
+// Create a new game
+let game: Game = new Game();
 
-	// Create a new board
-	let board = HtmlUtilities.elementFromString('<div class="board"></div>');
+// Choose a renderer
+let renderer: Renderer = new HtmlRenderer(game);
 
-	// For each row
-	for (let y = 1; y <= height; y++) {
-		let newRow = HtmlUtilities.elementFromString('<div class="row"></div>');
-
-		// For each column
-		for (let x = 1; x <= width; x++) {
-			newRow.appendChild(
-				HtmlUtilities.elementFromString('<div class="cell"></div>')
-			);
-		}
-
-		board.appendChild(newRow);
-	}
-
-	// Add the new board
-	boardHolder.appendChild(board);
-}
-
-
-const height = 8;
-const width = 8;
-let boardHolder;
-
+// When the document is loaded
 document.addEventListener("DOMContentLoaded", () => {
-	// Find the board holder
-	boardHolder = document.querySelector('.board-holder');
+	// Render the board
+	renderer.renderBoard();
 
-	// Generate the board
-	generateBoard();
+	// Show possible moves for first piece
+	renderer.highlightMovesFor(game.pieces[0]);
 });
