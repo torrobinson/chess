@@ -1,0 +1,35 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "npm",
+			"script": "install",
+			"group": "build",
+			"problemMatcher": [],
+			"label": "npm: install",
+			"detail": "install dependencies from package",
+			// Auto-run `npm i` on workspace open
+			"runOptions": { 
+				"runOn": "folderOpen" 
+			},
+		},
+		{
+			// Run default Gulp task to run on open
+			"type": "gulp",
+			"task": "default",
+			"problemMatcher": [],
+			"label": "gulp: default",
+			"runOptions": { 
+				"runOn": "folderOpen" 
+			},
+			"presentation": {
+				"reveal": "always",
+				"panel": "new"
+			},
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		},
+	]
+}
