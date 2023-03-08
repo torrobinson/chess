@@ -20,7 +20,7 @@ export class Game {
 	}
 
 	private resetPieces(): void {
-		this.pieces = [new Rook(PlayerType.White, new Point(0, 0))];
+		this.pieces = [new Rook(PlayerType.White, new Point(3, 3))];
 
 		// // create pawns for both players
 		// for (let i = 0; i < 8; i++) {

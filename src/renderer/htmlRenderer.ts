@@ -4,6 +4,7 @@ import { Game } from "../class/game";
 import { Piece } from "../class/piece";
 import { Pawn } from "../class/pieces/pawn";
 import { Rook } from "../class/pieces/rook";
+import { Point } from "../class/point";
 
 export class HtmlRenderer implements Renderer {
 
@@ -28,12 +29,13 @@ export class HtmlRenderer implements Renderer {
 
 		// For each row
 		for (let y = 0; y < this.height; y++) {
-			let newRow: HTMLElement = HtmlUtilities.elementFromString('<div class="row"></div>');
+			let boardY = 7 - y; // Subtract from 7 because our origin is bottom-left for White
+			let newRow: HTMLElement = HtmlUtilities.elementFromString(`<div y="${boardY}" class="row"></div>`);
 
 			// For each column
 			for (let x = 0; x < this.width; x++) {
-				let newCell: HTMLElement = HtmlUtilities.elementFromString('<div class="cell"></div>');
-				let piece: Piece | null = this.game.getPieceAt(x, 7 - y); // Subtract from 7 because our origin is bottom-left for White
+				let newCell: HTMLElement = HtmlUtilities.elementFromString(`<div x="${x}" y="${boardY}" class="cell"></div>`);
+				let piece: Piece | null = this.game.getPieceAt(x, boardY);
 				if (piece !== null) {
 					let pieceTempString: string = "?";
 					if (piece instanceof Pawn) pieceTempString = 'P';
@@ -54,9 +56,21 @@ export class HtmlRenderer implements Renderer {
 	}
 
 	highlightMovesFor(piece: Piece): void {
+		// Get the moveable positions for this piece
+		let moveable: Point[] = piece.getMoveablePositions();
 
-		piece.moveVectors
-		console.log(`Can move {}`);
+		// For each position
+		moveable.forEach((point: Point) => {
+			// Get cell at this location
+			let cell: HTMLElement | null = document.querySelector(`.cell[x="${point.x}"][y="${point.y}"]`);
+
+			// Add an indicator
+			if (cell !== null) {
+				cell.appendChild(
+					HtmlUtilities.elementFromString('X')
+				);
+			}
+		});
 	}
 
 }

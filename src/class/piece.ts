@@ -11,4 +11,11 @@ export abstract class Piece {
 		this.owner = owner;
 		this.position = position;
 	}
+
+	public getMoveablePositions(): Point[] {
+		// TODO: also get attack vectors added
+		return this.moveVectors
+			.map(mv => this.position.add(mv))
+			.filter(p => p.isInBounds);
+	}
 }
