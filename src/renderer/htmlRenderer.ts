@@ -23,7 +23,7 @@ export class HtmlRenderer implements Renderer {
 	readonly width = 8;
 
 	// State
-	lastClickedPiece: Piece | null;
+	currentlySelectedPiece: Piece | null = null;
 
 	constructor(game: Game) {
 		this.game = game;
@@ -51,18 +51,18 @@ export class HtmlRenderer implements Renderer {
 				if (piece !== null) {
 					let pieceTempString: string = "?";
 
-					if (piece instanceof Pawn) pieceTempString = '♟︎';
-					else if (piece instanceof Rook) pieceTempString = '♜';
-					else if (piece instanceof Bishop) pieceTempString = '♝';
-					else if (piece instanceof Knight) pieceTempString = '♞';
-					else if (piece instanceof Queen) pieceTempString = '♛';
-					else if (piece instanceof King) pieceTempString = '♚';
+					if (piece instanceof Pawn) pieceTempString = '<i class="fa-solid fa-chess-pawn"></i>';
+					else if (piece instanceof Rook) pieceTempString = '<i class="fa-solid fa-chess-rook"></i>';
+					else if (piece instanceof Bishop) pieceTempString = '<i class="fa-solid fa-chess-bishop"></i>';
+					else if (piece instanceof Knight) pieceTempString = '<i class="fa-solid fa-chess-knight"></i>';
+					else if (piece instanceof Queen) pieceTempString = '<i class="fa-solid fa-chess-queen"></i>';
+					else if (piece instanceof King) pieceTempString = '<i class="fa-solid fa-chess-king"></i>';
 					else pieceTempString = '?';
 
 					let playerClassName: string = piece.owner === PlayerType.White ? 'white' : 'black';
 
 					newCell.appendChild(
-						HtmlUtilities.elementFromString(`<span class="${playerClassName}">${pieceTempString}</span>`)
+						HtmlUtilities.elementFromString(`<span class="${playerClassName} piece">${pieceTempString}</span>`)
 					);
 				}
 
@@ -87,28 +87,53 @@ export class HtmlRenderer implements Renderer {
 				let y: number = parseInt(cellElement.getAttribute('y') || '-1');
 				let pieceClicked: Piece | null = this.game.getPieceAt(x, y);
 
-				// If they click the same cell they did last time, unselect it
-				if (this.lastClickedPiece === pieceClicked) {
-					pieceClicked = null;
+				// If a piece is selected
+				if (this.currentlySelectedPiece !== null) {
+
+					// If they click the same cell they did last time, unselect it
+					if (this.currentlySelectedPiece === pieceClicked) {
+						// Unselect it
+						this.currentlySelectedPiece = null;
+					}
+
+					else if (
+						// They clicked on a piece and then an empty square
+						pieceClicked === null
+						// OR they clicked on a piece and then an opposing piece
+						|| (pieceClicked !== null && pieceClicked.owner !== this.currentlySelectedPiece.owner)
+					) {
+						try {
+							// Try move it
+							this.currentlySelectedPiece.moveTo(x, y);
+
+							// Unselect it
+							this.currentlySelectedPiece = null;
+
+							this.renderBoard();
+						}
+						catch (ex) {
+
+							// Unselect it
+							this.currentlySelectedPiece = null;
+							this.renderBoard();
+							console.error(ex);
+						}
+					}
+
+					// If there was a piece selected, highlight where you can move
+					// This will either show or hide the highlights
+					this.highlightMovesFor(pieceClicked);
+
+
+				}
+				// Nothing is currently selected
+				else {
+					// Select it
+					this.currentlySelectedPiece = pieceClicked;
 				}
 
-				// If there was a piece selected, highlight where you can move
-				// This will either show or hide the highlights
-				this.highlightMovesFor(pieceClicked);
-
-				// If they have a piece selected and clicked an empty cell to try move it
-				if (this.lastClickedPiece !== null && pieceClicked === null) {
-					try {
-						this.lastClickedPiece.moveTo(x, y);
-						this.renderBoard();
-					}
-					catch (ex) {
-						console.error(ex);
-					}
-				}
-
-				// Finally, set the last piece clicked to this one
-				this.lastClickedPiece = pieceClicked;
+				// Finally, render the board again always after a click
+				this.highlightMovesFor(this.currentlySelectedPiece);
 			});
 		});
 	}

@@ -25,25 +25,29 @@ export abstract class Piece {
 		this.moveVectors.forEach((vectorSet: Point[]) => {
 
 			let hasStopped: boolean = false;
+			let previousWasCapture: boolean = false;
 
 			vectorSet.forEach((vector: Point) => {
 
-				let moveablePoint: Point = this.position.add(vector)
-				// Check if we're colliding with a piece
-				let pieceAlreadyAtLocation: Piece | null = this.game.getPieceAt(moveablePoint.x, moveablePoint.y);
-				if (pieceAlreadyAtLocation !== null) {
-					// If it's our own piece, we can't do anything
-					if (pieceAlreadyAtLocation.owner === this.owner) {
-						hasStopped = true;
-					}
-					// If we don't own it, we can attack it
-					else {
+				if (!previousWasCapture) {
+					let moveablePoint: Point = this.position.add(vector)
 
+					// Check if we're colliding with a piece
+					let pieceAlreadyAtLocation: Piece | null = this.game.getPieceAt(moveablePoint.x, moveablePoint.y);
+					if (pieceAlreadyAtLocation !== null) {
+						// If it's our own piece, we can't do anything
+						if (pieceAlreadyAtLocation.owner === this.owner) {
+							hasStopped = true;
+						}
+						// If we don't own it, we can attack it
+						else {
+							previousWasCapture = true;
+						}
 					}
-				}
 
-				if (!hasStopped) {
-					positions.push(moveablePoint);
+					if (!hasStopped) {
+						positions.push(moveablePoint);
+					}
 				}
 			});
 
