@@ -12,7 +12,4 @@ let renderer: Renderer = new HtmlRenderer(game);
 document.addEventListener("DOMContentLoaded", () => {
 	// Render the board
 	renderer.renderBoard();
-
-	// Show possible moves for first piece
-	renderer.highlightMovesFor(game.pieces[0]);
 });

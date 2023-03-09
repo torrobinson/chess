@@ -5,13 +5,24 @@ import { Piece } from "../class/piece";
 import { Pawn } from "../class/pieces/pawn";
 import { Rook } from "../class/pieces/rook";
 import { Point } from "../class/point";
+import { Bishop } from "../class/pieces/bishop";
+import { Knight } from "../class/pieces/knight";
+import { Queen } from "../class/pieces/queen";
+import { King } from "../class/pieces/king";
 
 export class HtmlRenderer implements Renderer {
 
 	public game: Game;
+
+	// Elements
+	boardHolder: HTMLElement | null;
+
+	// Constants
 	readonly height = 8;
 	readonly width = 8;
-	boardHolder: HTMLElement | null;
+
+	// State
+	lastClickedPiece: Piece | null;
 
 	constructor(game: Game) {
 		this.game = game;
@@ -38,39 +49,89 @@ export class HtmlRenderer implements Renderer {
 				let piece: Piece | null = this.game.getPieceAt(x, boardY);
 				if (piece !== null) {
 					let pieceTempString: string = "?";
-					if (piece instanceof Pawn) pieceTempString = 'P';
-					if (piece instanceof Rook) pieceTempString = 'R';
+
+					if (piece instanceof Pawn) pieceTempString = '♟︎';
+					if (piece instanceof Rook) pieceTempString = '♜';
+					if (piece instanceof Bishop) pieceTempString = '♝';
+					if (piece instanceof Knight) pieceTempString = '♞';
+					if (piece instanceof Queen) pieceTempString = '♛';
+					if (piece instanceof King) pieceTempString = '♚';
+
 					newCell.appendChild(
 						HtmlUtilities.elementFromString(`<span>${pieceTempString}</span>`)
 					);
 				}
+
+				// Add cell to row
 				newRow.appendChild(newCell);
 			}
-
+			// Add row to board
 			board.appendChild(newRow);
 		}
 
-		// Add the new board
+		// Add board to DOM
 		this.boardHolder.innerHTML = '';
 		this.boardHolder.appendChild(board);
+
+
+		// Setup board input events
+		board.querySelectorAll('.cell').forEach(cellElement => {
+
+			// On cell clicks
+			cellElement.addEventListener('click', () => {
+				let x: number = parseInt(cellElement.getAttribute('x') || '-1');
+				let y: number = parseInt(cellElement.getAttribute('y') || '-1');
+				let pieceClicked: Piece | null = this.game.getPieceAt(x, y);
+
+				// If they click the same cell they did last time, unselect it
+				if (this.lastClickedPiece === pieceClicked) {
+					pieceClicked = null;
+				}
+
+				// If there was a piece selected, highlight where you can move
+				// This will either show or hide the highlights
+				this.highlightMovesFor(pieceClicked);
+
+				// If they have a piece selected and clicked an empty cell to try move it
+				if (this.lastClickedPiece !== null && pieceClicked === null) {
+					try {
+						this.lastClickedPiece.moveTo(x, y);
+						this.renderBoard();
+					}
+					catch (ex) {
+						console.error(ex);
+					}
+				}
+
+				// Finally, set the last piece clicked to this one
+				this.lastClickedPiece = pieceClicked;
+			});
+		});
 	}
 
-	highlightMovesFor(piece: Piece): void {
-		// Get the moveable positions for this piece
-		let moveable: Point[] = piece.getMoveablePositions();
+	highlightMovesFor(piece: Piece | null): void {
+		const moveableClassName = 'moveable';
 
-		// For each position
-		moveable.forEach((point: Point) => {
-			// Get cell at this location
-			let cell: HTMLElement | null = document.querySelector(`.cell[x="${point.x}"][y="${point.y}"]`);
-
-			// Add an indicator
-			if (cell !== null) {
-				cell.appendChild(
-					HtmlUtilities.elementFromString('X')
-				);
-			}
+		// Clear possible moves from cells
+		document.querySelectorAll('.cell').forEach((cell: Element) => {
+			cell.classList.remove(moveableClassName);
 		});
+
+		if (piece !== null) {
+			// Get the moveable positions for this piece
+			let moveable: Point[] = piece.getMoveablePositions();
+
+			// For each position
+			moveable.forEach((point: Point) => {
+				// Get cell at this location
+				let cell: HTMLElement | null = document.querySelector(`.cell[x="${point.x}"][y="${point.y}"]`);
+
+				// Add an indicator
+				if (cell !== null) {
+					cell.classList.add(moveableClassName);
+				}
+			});
+		}
 	}
 
 }

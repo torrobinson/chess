@@ -3,6 +3,7 @@
 $cell-bg-white: lightgrey;
 $cell-bg-black: black;
 $cell-bg-hover: red;
+$cell-bg-moveable: yellow;
 $cell-size-percentage-of-parent: math.div(100%, 8);
 
 .board{
@@ -21,11 +22,15 @@ $cell-size-percentage-of-parent: math.div(100%, 8);
 			cursor: pointer;
 
 			&:hover{
-				background-color: $cell-bg-hover !important;
+				background-color: $cell-bg-hover;
+			}
+
+			&.moveable{
+				background-color: $cell-bg-moveable !important;
 			}
 
 			/// TEMP for character display before sprites
-			font-size: 55px;
+			font-size: 45px;
 			text-align: center;
 			color: grey;
 		}
