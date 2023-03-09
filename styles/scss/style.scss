@@ -1,7 +1,7 @@
 @use "sass:math";
 
 $cell-bg-white: lightgrey;
-$cell-bg-black: black;
+$cell-bg-black: darkgrey;
 $cell-bg-hover: red;
 $cell-bg-moveable: yellow;
 $cell-size-percentage-of-parent: math.div(100%, 8);
@@ -32,7 +32,14 @@ $cell-size-percentage-of-parent: math.div(100%, 8);
 			/// TEMP for character display before sprites
 			font-size: 45px;
 			text-align: center;
-			color: grey;
+			
+			.white{
+				color: white;
+				text-shadow: 1px 1px 3px black;
+			}
+			.black{
+				color: black;
+			}
 		}
 
 		&:nth-child(odd){

@@ -9,6 +9,7 @@ import { Bishop } from "../class/pieces/bishop";
 import { Knight } from "../class/pieces/knight";
 import { Queen } from "../class/pieces/queen";
 import { King } from "../class/pieces/king";
+import { PlayerType } from "../enum/playerType";
 
 export class HtmlRenderer implements Renderer {
 
@@ -51,14 +52,17 @@ export class HtmlRenderer implements Renderer {
 					let pieceTempString: string = "?";
 
 					if (piece instanceof Pawn) pieceTempString = '♟︎';
-					if (piece instanceof Rook) pieceTempString = '♜';
-					if (piece instanceof Bishop) pieceTempString = '♝';
-					if (piece instanceof Knight) pieceTempString = '♞';
-					if (piece instanceof Queen) pieceTempString = '♛';
-					if (piece instanceof King) pieceTempString = '♚';
+					else if (piece instanceof Rook) pieceTempString = '♜';
+					else if (piece instanceof Bishop) pieceTempString = '♝';
+					else if (piece instanceof Knight) pieceTempString = '♞';
+					else if (piece instanceof Queen) pieceTempString = '♛';
+					else if (piece instanceof King) pieceTempString = '♚';
+					else pieceTempString = '?';
+
+					let playerClassName: string = piece.owner === PlayerType.White ? 'white' : 'black';
 
 					newCell.appendChild(
-						HtmlUtilities.elementFromString(`<span>${pieceTempString}</span>`)
+						HtmlUtilities.elementFromString(`<span class="${playerClassName}">${pieceTempString}</span>`)
 					);
 				}
 
