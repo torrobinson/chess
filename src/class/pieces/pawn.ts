@@ -5,8 +5,12 @@ import { Point } from "../point";
 
 export class Pawn extends Piece {
 
+
 	constructor(game: Game, owner: PlayerType, position: Point) {
 		super(game, owner, position);
+
+		// Pawns don't attack where they move, and vice versa
+		this.attacksWhereItMoves = false;
 
 		// Since pawns can only move in 1 direction, base it off of player type
 		// Black moves down, white moves up

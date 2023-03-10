@@ -10,6 +10,7 @@ export abstract class Piece {
 	inPlay: boolean = true;
 	moveVectors: Point[][];
 	attackVectors: Point[][];
+	attacksWhereItMoves: boolean = true;
 	moveCount: number = 0;
 
 	constructor(game: Game, owner: PlayerType, position: Point) {
@@ -20,42 +21,78 @@ export abstract class Piece {
 
 	public getMoveablePositions(): Point[] {
 
-		let positions: Point[] = [];
 
-		this.moveVectors.forEach((vectorSet: Point[]) => {
+		// Reusable function
+		let getMovesAndAttacksFromVectorSet = (vectorSet: Point[][]): Point[] => {
+			let returnPositions: Point[] = [];
+			vectorSet.forEach((vectorSet: Point[]) => {
 
-			let hasStopped: boolean = false;
-			let previousWasCapture: boolean = false;
+				let hasStopped: boolean = false;
+				let previousWasCapture: boolean = false;
 
-			vectorSet.forEach((vector: Point) => {
+				vectorSet.forEach((vector: Point) => {
 
-				if (!previousWasCapture) {
-					let moveablePoint: Point = this.position.add(vector)
+					if (!previousWasCapture) {
+						let moveablePoint: Point = this.position.add(vector)
 
-					// Check if we're colliding with a piece
-					let pieceAlreadyAtLocation: Piece | null = this.game.getPieceAt(moveablePoint.x, moveablePoint.y);
-					if (pieceAlreadyAtLocation !== null) {
-						// If it's our own piece, we can't do anything
-						if (pieceAlreadyAtLocation.owner === this.owner) {
-							hasStopped = true;
+						// Check if we're colliding with a piece
+						let pieceAlreadyAtLocation: Piece | null = this.game.getPieceAt(moveablePoint.x, moveablePoint.y);
+						if (pieceAlreadyAtLocation !== null) {
+							// If it's our own piece, we can't do anything
+							if (pieceAlreadyAtLocation.owner === this.owner) {
+								hasStopped = true;
+							}
+							// If we don't own it, we can attack it
+							else {
+								previousWasCapture = true;
+							}
 						}
-						// If we don't own it, we can attack it
-						else {
-							previousWasCapture = true;
+
+						if (!hasStopped) {
+							returnPositions.push(moveablePoint);
 						}
 					}
+				});
 
-					if (!hasStopped) {
-						positions.push(moveablePoint);
-					}
-				}
 			});
 
-		});
+			return returnPositions;
+		};
 
-		// Special logic
+		// Get moves
+		let positions: Point[] = getMovesAndAttacksFromVectorSet(this.moveVectors);
 
-		// Unmoved pawns can double jump
+		// Special logic: pieces that can't move where they attack and vice versa will have their 
+		//	attackable moveable positions removed from the list,
+		//	and then their ACTUAL attackable ones added
+		if (this.attacksWhereItMoves === false) {
+			// See if where it'd move would be an "attack"
+			let movesThatWouldBeIntoAnEnemyPiece: Point[] = positions.filter((p: Point) => {
+				let pieceAtMovePosiion: Piece | null = this.game.getPieceAt(p.x, p.y);
+
+				if (pieceAtMovePosiion === null) return false
+
+				return pieceAtMovePosiion.owner !== this.owner;
+
+			});
+
+			// Remove them from standard moves
+			movesThatWouldBeIntoAnEnemyPiece.forEach((p: Point) => {
+				let index: number = positions.indexOf(p);
+				if (index > -1) positions.splice(index, 1);
+			});
+
+			// Now check for actual attack moves
+			let attackMoves: Point[] = getMovesAndAttacksFromVectorSet(this.attackVectors);
+			attackMoves.forEach((attackPosition: Point) => {
+				let potentialAttackPiece: Piece | null = this.game.getPieceAt(attackPosition.x, attackPosition.y);
+				if (potentialAttackPiece !== null && potentialAttackPiece.owner !== this.owner) {
+					positions = positions.concat(attackMoves);
+				}
+			});
+		}
+
+		// Special logic: unmoved (0-moveCount) pawns can double jump
 		if (this instanceof Pawn && this.moveCount === 0) {
 			positions.push(
 				this.position.add(
@@ -63,6 +100,7 @@ export abstract class Piece {
 				)
 			);
 		}
+
 
 		return positions.filter(p => p.isInBounds);
 	}
