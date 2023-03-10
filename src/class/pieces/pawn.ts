@@ -26,5 +26,7 @@ export class Pawn extends Piece {
 			[new Point(-1, verticalVector)],
 			[new Point(1, verticalVector)],
 		];
+
+		this.materialValue = 1;
 	}
 }

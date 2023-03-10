@@ -94,5 +94,7 @@ export class Queen extends Piece {
 
 	constructor(game: Game, owner: PlayerType, position: Point) {
 		super(game, owner, position);
+
+		this.materialValue = 9;
 	}
 }

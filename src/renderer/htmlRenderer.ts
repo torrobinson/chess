@@ -17,6 +17,9 @@ export class HtmlRenderer implements Renderer {
 
 	// Elements
 	boardHolder: HTMLElement | null;
+	playerIndicator: HTMLElement | null;
+	whiteScoreIndicator: HTMLElement | null;
+	blackScoreIndicator: HTMLElement | null;
 
 	// Constants
 	readonly height = 8;
@@ -34,6 +37,21 @@ export class HtmlRenderer implements Renderer {
 		this.boardHolder = document.querySelector('.board-holder');
 		if (this.boardHolder === null) {
 			throw 'board holder not found';
+		}
+
+		this.playerIndicator = document.querySelector('.current-player-indicator');
+		if (this.playerIndicator === null) {
+			throw 'player indicator not found';
+		}
+
+		this.blackScoreIndicator = document.querySelector('.black-score');
+		if (this.blackScoreIndicator === null) {
+			throw 'black indicator not found';
+		}
+
+		this.whiteScoreIndicator = document.querySelector('.white-score');
+		if (this.whiteScoreIndicator === null) {
+			throw 'white indicator not found';
 		}
 
 		// Create a new board
@@ -120,10 +138,8 @@ export class HtmlRenderer implements Renderer {
 						}
 					}
 
-					// If there was a piece selected, highlight where you can move
-					// This will either show or hide the highlights
-					this.highlightMovesFor(pieceClicked);
-
+					// Select it
+					this.currentlySelectedPiece = pieceClicked;
 
 				}
 				// Nothing is currently selected
@@ -136,30 +152,60 @@ export class HtmlRenderer implements Renderer {
 				this.highlightMovesFor(this.currentlySelectedPiece);
 			});
 		});
+
+		// Update current player
+		let color: string = '';
+		switch (this.game.getCurrentPlayer()) {
+			case PlayerType.Black:
+				color = 'black';
+				break;
+			case PlayerType.White:
+				color = 'white';
+				break;
+		}
+		this.playerIndicator.innerHTML = `Player: <div style="display: inline-block; border: 1px solid black; height: 20px; width: 20px; background-color: ${color};"></div>`;
+
+		// Update scores
+		this.whiteScoreIndicator.innerHTML = 'White: ' + this.game.capturedPieces.filter(p => p.owner === PlayerType.Black).reduce((totalMaterial, piece) => totalMaterial + piece.materialValue, 0);
+		this.blackScoreIndicator.innerHTML = 'Black: ' + this.game.capturedPieces.filter(p => p.owner === PlayerType.White).reduce((totalMaterial, piece) => totalMaterial + piece.materialValue, 0);
 	}
 
 	highlightMovesFor(piece: Piece | null): void {
-		const moveableClassName = 'moveable';
+		if (piece === null || !piece.inPlay) {
+			// We're highlighting moves for nothing
+		}
+		else {
+			// We're highlighting moves for something
 
-		// Clear possible moves from cells
-		document.querySelectorAll('.cell').forEach((cell: Element) => {
-			cell.classList.remove(moveableClassName);
-		});
+			// We're looking at the current player's pieces, so show the moves
+			if (piece.owner === this.game.getCurrentPlayer()) {
+				const moveableClassName = 'moveable';
 
-		if (piece !== null) {
-			// Get the moveable positions for this piece
-			let moveable: Point[] = piece.getMoveablePositions();
+				// Clear possible moves from cells
+				document.querySelectorAll('.cell').forEach((cell: Element) => {
+					cell.classList.remove(moveableClassName);
+				});
 
-			// For each position
-			moveable.forEach((point: Point) => {
-				// Get cell at this location
-				let cell: HTMLElement | null = document.querySelector(`.cell[x="${point.x}"][y="${point.y}"]`);
+				if (piece !== null) {
+					// Get the moveable positions for this piece
+					let moveable: Point[] = piece.getMoveablePositions();
 
-				// Add an indicator
-				if (cell !== null) {
-					cell.classList.add(moveableClassName);
+					// For each position
+					moveable.forEach((point: Point) => {
+						// Get cell at this location
+						let cell: HTMLElement | null = document.querySelector(`.cell[x="${point.x}"][y="${point.y}"]`);
+
+						// Add an indicator
+						if (cell !== null) {
+							cell.classList.add(moveableClassName);
+						}
+					});
 				}
-			});
+			}
+			else {
+				// We're looking at the other player's pieces
+			}
+
 		}
 	}
 

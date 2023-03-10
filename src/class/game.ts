@@ -9,7 +9,22 @@ import { Queen } from "./pieces/queen";
 import { King } from "./pieces/king";
 
 export class Game {
+	// Actors
 	public pieces: Piece[] = [];
+
+	// State
+	public lastMovedPiece: Piece | null = null;
+
+
+	// Accessors
+	public get capturedPieces(): Piece[] {
+		return this.pieces.filter((piece: Piece) => !piece.inPlay);
+	}
+
+	public get uncapturedPieces(): Piece[] {
+		return this.pieces.filter((piece: Piece) => piece.inPlay);
+	}
+
 
 	constructor() {
 		this.reset();
@@ -19,8 +34,18 @@ export class Game {
 		this.resetPieces();
 	}
 
+	public getCurrentPlayer(): PlayerType {
+		if (this.lastMovedPiece === null) {
+			// If nobody has gone yet, white always starts
+			return PlayerType.White;
+		}
+		else {
+			return this.lastMovedPiece.owner === PlayerType.White ? PlayerType.Black : PlayerType.White;
+		}
+	}
+
 	public getPieceAt(x: number, y: number): Piece | null {
-		return this.pieces.filter(p => p.inPlay && p.position.x === x && p.position.y === y)[0] ?? null;
+		return this.uncapturedPieces.filter(p => p.position.x === x && p.position.y === y)[0] ?? null;
 	}
 
 	private resetPieces(): void {
@@ -63,5 +88,9 @@ export class Game {
 			new Pawn(this, PlayerType.Black, new Point(7, 6))
 		];
 
+	}
+
+	public onPieceMoved(piece: Piece): void {
+		this.lastMovedPiece = piece;
 	}
 }

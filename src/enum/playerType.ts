@@ -1,4 +1,4 @@
 export enum PlayerType {
-	White,
-	Black
+	White = 'White',
+	Black = 'Black'
 }

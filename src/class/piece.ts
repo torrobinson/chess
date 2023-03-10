@@ -12,6 +12,7 @@ export abstract class Piece {
 	attackVectors: Point[][];
 	attacksWhereItMoves: boolean = true;
 	moveCount: number = 0;
+	materialValue: number = 0;
 
 	constructor(game: Game, owner: PlayerType, position: Point) {
 		this.game = game;
@@ -87,7 +88,7 @@ export abstract class Piece {
 			attackMoves.forEach((attackPosition: Point) => {
 				let potentialAttackPiece: Piece | null = this.game.getPieceAt(attackPosition.x, attackPosition.y);
 				if (potentialAttackPiece !== null && potentialAttackPiece.owner !== this.owner) {
-					positions = positions.concat(attackMoves);
+					positions.push(attackPosition);
 				}
 			});
 		}
@@ -107,8 +108,10 @@ export abstract class Piece {
 
 	public moveTo(x: number, y: number): void {
 
-		let doMove: boolean = false;
+		// Don't allow moves if it's not our turn
+		if (this.game.getCurrentPlayer() !== this.owner) return;
 
+		let doMove: boolean = false;
 		let newPosition: Point = new Point(x, y);
 
 		// If we're able to move there
@@ -145,6 +148,7 @@ export abstract class Piece {
 		if (doMove) {
 			this.position = newPosition;
 			this.moveCount++;
+			this.game.onPieceMoved(this);
 		}
 	}
 }
