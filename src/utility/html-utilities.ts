@@ -1,17 +1,29 @@
 export abstract class HtmlUtilities {
-
-	public static elementFromString(htmlString: string): HTMLElement {
-		var div = document.createElement('div');
+	static elementFromString(htmlString: string): HTMLElement {
+		let div: HTMLElement = document.createElement('div');
 		div.innerHTML = htmlString.trim();
-		return div.firstChild as HTMLElement;
+		return div.firstChild! as HTMLElement;
 	}
 
-	public static liveBind(eventType, elementQuerySelector, cb) {
+	static removeClassFromElements(querySelector: string, className: string): void {
+		document.querySelectorAll(querySelector).forEach((el: Element) => {
+			el.classList.remove(className);
+		});
+	}
+
+	static addClassFromElements(querySelector: string, className: string): void {
+		document.querySelectorAll(querySelector).forEach((el: Element) => {
+			el.classList.add(className);
+		});
+	}
+
+	static liveBind(eventType, elementQuerySelector, cb) {
 		document.addEventListener(eventType, event => {
 			let el = event.target.closest(elementQuerySelector);
 			if (el) {
 				cb.call(this, el, event);
 			}
+
 		});
 	}
 }

@@ -24,6 +24,9 @@ export class HtmlRenderer {
 	// Constants
 	readonly height = 8;
 	readonly width = 8;
+	private readonly selectedClassName: string = 'selected';
+	private readonly lastSelectedClassName: string = 'last-selected';
+	private readonly capturedClassName: string = 'captured';
 
 	// State
 	currentlySelectedPiece: Piece | null = null;
@@ -64,6 +67,21 @@ export class HtmlRenderer {
 		// Update scores
 		whiteScoreIndicator.innerHTML = 'White: ' + this.game.capturedPieces.filter(p => p.owner === PlayerType.Black).reduce((totalMaterial, piece) => totalMaterial + piece.materialValue, 0);
 		blackScoreIndicator.innerHTML = 'Black: ' + this.game.capturedPieces.filter(p => p.owner === PlayerType.White).reduce((totalMaterial, piece) => totalMaterial + piece.materialValue, 0);
+	}
+
+	selectPiece(piece: Piece): void {
+		HtmlUtilities.removeClassFromElements('piece', this.lastSelectedClassName);
+		this.deselectCurrentPiece();
+		this.currentlySelectedPiece = piece;
+		let pieceElement: HTMLElement | null = this.getPieceElementAt(piece.position.x, piece.position.y);
+		if (pieceElement !== null) {
+			pieceElement.classList.add(this.selectedClassName);
+			pieceElement.classList.add(this.lastSelectedClassName);
+		}
+	}
+	deselectCurrentPiece(): void {
+		this.currentlySelectedPiece = null;
+		HtmlUtilities.removeClassFromElements('piece', this.selectedClassName);
 	}
 
 	initialize(): void {
@@ -108,10 +126,10 @@ export class HtmlRenderer {
 					// If they click the same cell they did last time, unselect it
 					if (this.currentlySelectedPiece === pieceClicked) {
 						// Unselect it
-						this.currentlySelectedPiece = null;
+						this.deselectCurrentPiece();
 					}
 				}
-				this.currentlySelectedPiece = pieceClicked;
+				this.selectPiece(pieceClicked);
 			}
 
 			// Finally, render the board again always after a click
@@ -140,11 +158,11 @@ export class HtmlRenderer {
 					this.currentlySelectedPiece.moveTo(x, y);
 
 					// and then unselect it
-					this.currentlySelectedPiece = null;
+					this.deselectCurrentPiece();
 				}
 				catch (ex) {
 					// Unselect it in an error or bad move
-					this.currentlySelectedPiece = null;
+					this.deselectCurrentPiece();
 					this.initialize();
 					console.error(ex);
 				}
@@ -158,13 +176,13 @@ export class HtmlRenderer {
 		// When a piece moves, update it's position in the DOM
 		this.game.onPieceMoved.on((event: PieceMovedEventArgs) => {
 			// Unselect anything
-			this.currentlySelectedPiece = null
+			this.deselectCurrentPiece();
 
 			// Redraw no moves
 			this.highlightMovesFor(null);
 
 			// Given a piece, find the piece in our environment and physically move it
-			let pieceElement: HTMLElement | null = document.querySelector(`piece[x="${event.movedFrom.x}"][y="${event.movedFrom.y}"]`);
+			let pieceElement: HTMLElement | null = this.getPieceElementAt(event.movedFrom.x, event.movedFrom.y);
 			if (pieceElement !== null) {
 				// Update it
 				pieceElement.setAttribute('x', event.movedTo.x.toString());
@@ -177,9 +195,9 @@ export class HtmlRenderer {
 		// When a piece is captured
 		this.game.onPieceCaptured.on((event: PieceCapturedEventArgs) => {
 			// Update it in the dom
-			let pieceElement: HTMLElement | null = document.querySelector(`piece[x="${event.capturedAt.x}"][y="${event.capturedAt.y}"].${event.capturedPiece.owner}`);
+			let pieceElement: HTMLElement | null = this.getPieceElementAt(event.capturedAt.x, event.capturedAt.y, event.capturedPiece.owner);
 			if (pieceElement !== null) {
-				pieceElement.classList.add('captured');
+				pieceElement.classList.add(this.capturedClassName);
 			}
 
 			this.updateIndicators();
@@ -229,6 +247,16 @@ export class HtmlRenderer {
 			}
 
 		}
+	}
+
+	private getPieceElementAt(x: number, y: number, owner: PlayerType | null = null): HTMLElement | null {
+		let query: string = `piece[x="${x}"][y="${y}"]`;
+		if (owner !== null) {
+			query += `.${owner}`;
+		}
+		let foundElement: HTMLElement | null = document.querySelector(query);
+
+		return foundElement;
 	}
 
 }

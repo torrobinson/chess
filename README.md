@@ -1,7 +1,7 @@
 # Todo:
 
 ## Niceties
-- [ ] Piece move animation
+- [x] Piece move animation
 - [ ] Piece capture animation
 - [ ] Sounds
 - [ ] Find open source piece sprites

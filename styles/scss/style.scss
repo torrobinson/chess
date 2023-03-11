@@ -15,6 +15,8 @@ $cell-size-percentage-of-parent: math.div(100%, 8);
 	$cellHeightPercent: calc(100% / $height);
 	$cellWidthPercent: calc(100% / $width);
 
+	$highlightColor: #0071ff;
+
 	display: inline-block;
 	position: relative;
 
@@ -48,6 +50,7 @@ $cell-size-percentage-of-parent: math.div(100%, 8);
 			display: inline-block;
 			cursor: pointer;
 			pointer-events: auto;
+			z-index: 1;
 
 			height: $cellHeightPercent;	// 100/8
 			width: $cellWidthPercent;	// 100/8
@@ -133,8 +136,12 @@ $cell-size-percentage-of-parent: math.div(100%, 8);
 				transform: translateY(25%);
 			}
 
+			// Capture state
+			opacity: 1.0;
+			transition: opacity 500ms ease;
 			&.captured{
-				display: none;
+				transition: opacity 500ms ease;
+				opacity: 0.0;
 				pointer-events: none;
 			}
 
@@ -147,6 +154,20 @@ $cell-size-percentage-of-parent: math.div(100%, 8);
 					background-image: url('../../img/pieces/#{$pieceCode}.png');
 				}
 			}
+
+			z-index: 1;
+			&.selected{
+				// Highlight in some way?
+				background-color: rgba($highlightColor, .5);
+			}
+			&.last-selected{
+				z-index: 2;
+			}
+
+			// Animations
+			$moveAnimation: 500ms ease;
+			transition: top #{$moveAnimation}, left #{$moveAnimation};
+			
 		}
 	}
 }
