@@ -3,6 +3,11 @@
 $cell-bg-hover: red;
 $cell-size-percentage-of-parent: math.div(100%, 8);
 
+.game-area{
+	display: flex;
+    justify-content: center;
+}
+
 .board{
 	$height: 8;
 	$width: 8;
@@ -12,8 +17,22 @@ $cell-size-percentage-of-parent: math.div(100%, 8);
 
 	display: inline-block;
 	position: relative;
-	width: 500px;
-	height: 500px;
+
+	$minBoardSizePixels: 300px;
+	$maxBoardSizePixels: 900px;
+
+	min-height: $minBoardSizePixels;
+	min-width: $minBoardSizePixels;
+	max-width: $maxBoardSizePixels;
+	max-height: $maxBoardSizePixels;
+	
+	width: 50%;
+
+	&:after {
+		content: "";
+		display: block;
+		padding-bottom: 100%;
+	}
 
 	background-image: url('../../img/boards/chess-board-purple.png');
 	background-size: contain;
@@ -52,7 +71,7 @@ $cell-size-percentage-of-parent: math.div(100%, 8);
 			$move-overlay-opacity: 0.20;
 
 			&.is-move::before{
-				$dot-width: 20px;
+				$dot-width: 25%;
 				content: "";
 				border-radius: 50%;
 				display: inline-block;
@@ -114,21 +133,19 @@ $cell-size-percentage-of-parent: math.div(100%, 8);
 				transform: translateY(25%);
 			}
 
-			&.white{
-				color: white;
-				svg{
-					stroke: black;
-					stroke-width: 15;
-				}
-			}
-
-			&.black{
-				
-			}
-
 			&.captured{
 				display: none;
 				pointer-events: none;
+			}
+
+			// Sprites
+			background-size: contain;
+			$pieceCodes: 'bk','bq','br','bb','bn','bp',
+						 'wk','wq','wr','wb','wn','wp';
+			@each $pieceCode in $pieceCodes {
+				&.#{$pieceCode}{
+					background-image: url('../../img/pieces/#{$pieceCode}.png');
+				}
 			}
 		}
 	}

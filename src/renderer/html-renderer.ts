@@ -76,16 +76,17 @@ export class HtmlRenderer {
 		// Create the piece elements
 		this.game.pieces.forEach((piece: Piece) => {
 			// Determine sprite
-			let pieceIcon: string = "?";
-			if (piece instanceof Pawn) pieceIcon = '<i class="fa-solid fa-chess-pawn"></i>';
-			else if (piece instanceof Rook) pieceIcon = '<i class="fa-solid fa-chess-rook"></i>';
-			else if (piece instanceof Bishop) pieceIcon = '<i class="fa-solid fa-chess-bishop"></i>';
-			else if (piece instanceof Knight) pieceIcon = '<i class="fa-solid fa-chess-knight"></i>';
-			else if (piece instanceof Queen) pieceIcon = '<i class="fa-solid fa-chess-queen"></i>';
-			else if (piece instanceof King) pieceIcon = '<i class="fa-solid fa-chess-king"></i>';
-			else pieceIcon = '?';
+			let pieceCode: string = '';
+			if (piece instanceof Pawn) pieceCode = 'p';
+			else if (piece instanceof Rook) pieceCode = 'r';
+			else if (piece instanceof Bishop) pieceCode = 'b';
+			else if (piece instanceof Knight) pieceCode = 'n';
+			else if (piece instanceof Queen) pieceCode = 'q';
+			else if (piece instanceof King) pieceCode = 'k';
 
-			let newPieceElement: HTMLElement = HtmlUtilities.elementFromString(`<piece x="${piece.position.x}" y="${piece.position.y}" class="${piece.owner}">${pieceIcon}</piece>`);
+			let playerCode: string = piece.owner == PlayerType.White ? 'w' : 'b';
+
+			let newPieceElement: HTMLElement = HtmlUtilities.elementFromString(`<piece x="${piece.position.x}" y="${piece.position.y}" class="${piece.owner} ${playerCode}${pieceCode}"></piece>`);
 
 			pieceHolder?.appendChild(newPieceElement);
 		});
