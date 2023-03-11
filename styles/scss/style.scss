@@ -1,116 +1,134 @@
 @use "sass:math";
 
-$cell-bg-white: #EFEFEF;
-$cell-bg-black: #8877B7;
 $cell-bg-hover: red;
 $cell-size-percentage-of-parent: math.div(100%, 8);
 
 .board{
-	border: 1px solid black;
+	$height: 8;
+	$width: 8;
+
+	$cellHeightPercent: calc(100% / $height);
+	$cellWidthPercent: calc(100% / $width);
+
 	display: inline-block;
+	position: relative;
 	width: 500px;
 	height: 500px;
-	
-	.row{
-		display: flex;
-		height: $cell-size-percentage-of-parent;
 
-		.cell{
+	background-image: url('../../img/boards/chess-board-purple.png');
+	background-size: contain;
+	
+	.moves{
+		position: absolute;
+		height: 100%;
+		width: 100%;		
+
+		pointer-events: none;
+
+		move{
 			display: inline-block;
+			cursor: pointer;
+			pointer-events: auto;
+
+			height: $cellHeightPercent;	// 100/8
+			width: $cellWidthPercent;	// 100/8
+
+			position: absolute !important;
+			@for $x from 0 through $width {
+				&[x='#{$x}']{
+					left: #{$x * $cellWidthPercent};
+				}
+			}
+			@for $y from 0 through $height {
+				&[y='#{$y}']{
+					top: #{100% - ($y + 1) * $cellHeightPercent};
+				}
+			}
+
 			position: relative;
-			width: $cell-size-percentage-of-parent;
+			text-align: center;
+			text-align: center;
+
+			$move-overlay-opacity: 0.20;
+
+			&.is-move::before{
+				$dot-width: 20px;
+				content: "";
+				border-radius: 50%;
+				display: inline-block;
+				height: $dot-width;
+				width: $dot-width;
+				background-color: rgb(0, 0, 0, $move-overlay-opacity);
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				margin-left: calc($dot-width * -0.5);
+				margin-top: calc($dot-width * -0.5);
+			}
+
+			&.is-attack::before{
+				$dot-width: 122%;
+				opacity: $move-overlay-opacity;
+				content: url('data:image/svg+xml; utf8, <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="35" stroke="black" stroke-width="4" fill="none" /></svg>');
+				border-radius: 50%;
+				display: inline-block;
+				height: $dot-width;
+				width: $dot-width;
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				margin-left: calc($dot-width * -0.5);
+				margin-top: calc($dot-width * -0.5);
+			}
+		}
+	}
+	.pieces{
+		position: absolute;
+		height: 100%;
+		width: 100%;		
+		piece{
+			display: inline-block;
 			cursor: pointer;
 
-			&:hover{
-				background-color: $cell-bg-hover;
+			height: $cellHeightPercent;	// 100/8
+			width: $cellWidthPercent;	// 100/8
+
+			position: absolute !important;
+			@for $x from 0 through $width {
+				&[x='#{$x}']{
+					left: #{$x * $cellWidthPercent};
+				}
 			}
-
-			.piece{
-				display: inline-block;
-
-				height: 100%;
-				width: 100%;
-
-				text-align: center;
-				display: flex;
-				flex-direction: column;
-				justify-content: center;
-
-				&.white{
-					color: white;
-					svg{
-						stroke: black;
-						stroke-width: 15;
-					}
-				}
-
-				&.black{
-					
-				}
-
-				&.white,&.black{
-					svg{
-						height: calc(100% - 22px);
-					}
-					position: relative;
-					text-align:center;
+			@for $y from 0 through $height {
+				&[y='#{$y}']{
+					top: #{100% - ($y + 1) * $cellHeightPercent};
 				}
 			}
 
-			&.moveable{
-				// Give it an icon
-				&::before{
-					$dot-width: 20px;
-					content: "";
-					border-radius: 50%;
-					display: inline-block;
-					height: $dot-width;
-					width: $dot-width;
-					background-color: rgb(0, 0, 0, 0.16);
-					position: absolute;
-					left: 50%;
-					top: 50%;
-					margin-left: calc($dot-width * -0.5);
-					margin-top: calc($dot-width * -0.5);
-				}
+			position: relative;
+			text-align: center;
+			text-align: center;
+			svg{
+				height: calc(100% - 22px);
+				top: 50%;
+				transform: translateY(25%);
+			}
 
-				.piece::before{
-					$dot-width: 122%;
-					content: url('data:image/svg+xml; utf8, <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="35" stroke="red" stroke-width="4" fill="none" /></svg>');
-					border-radius: 50%;
-					display: inline-block;
-					height: $dot-width;
-					width: $dot-width;
-					position: absolute;
-					left: 50%;
-					top: 50%;
-					margin-left: calc($dot-width * -0.5);
-					margin-top: calc($dot-width * -0.5);
+			&.white{
+				color: white;
+				svg{
+					stroke: black;
+					stroke-width: 15;
 				}
 			}
-		}
 
-		&:nth-child(odd){
-			.cell{
-				&:nth-child(odd){
-					background-color: $cell-bg-white;
-				}
-
-				&:nth-child(even){
-					background-color: $cell-bg-black;
-				}
+			&.black{
+				
 			}
-		}
 
-		&:nth-child(even){
-			.cell{
-				&:nth-child(even){
-					background-color: $cell-bg-white;
-				}
-
-				&:nth-child(odd){
-					background-color: $cell-bg-black;
-				}
+			&.captured{
+				display: none;
+				pointer-events: none;
 			}
 		}
 	}

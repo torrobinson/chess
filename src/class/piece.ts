@@ -1,4 +1,6 @@
-import { PlayerType } from "../enum/playerType";
+import { PlayerType } from "../enum/player-type";
+import { PieceCapturedEventArgs } from "../event-args/piece-captured-event-args";
+import { PieceMovedEventArgs } from "../event-args/piece-moved-event-args";
 import { Game } from "./game";
 import { Pawn } from "./pieces/pawn";
 import { Point } from "./point";
@@ -39,6 +41,8 @@ export abstract class Piece {
 						// Check if we're colliding with a piece
 						let pieceAlreadyAtLocation: Piece | null = this.game.getPieceAt(moveablePoint.x, moveablePoint.y);
 						if (pieceAlreadyAtLocation !== null) {
+							moveablePoint.hasPiece = true;
+
 							// If it's our own piece, we can't do anything
 							if (pieceAlreadyAtLocation.owner === this.owner) {
 								hasStopped = true;
@@ -70,11 +74,8 @@ export abstract class Piece {
 			// See if where it'd move would be an "attack"
 			let movesThatWouldBeIntoAnEnemyPiece: Point[] = positions.filter((p: Point) => {
 				let pieceAtMovePosiion: Piece | null = this.game.getPieceAt(p.x, p.y);
-
 				if (pieceAtMovePosiion === null) return false
-
 				return pieceAtMovePosiion.owner !== this.owner;
-
 			});
 
 			// Remove them from standard moves
@@ -107,16 +108,19 @@ export abstract class Piece {
 	}
 
 	public moveTo(x: number, y: number): void {
-
 		// Don't allow moves if it's not our turn
 		if (this.game.getCurrentPlayer() !== this.owner) return;
 
 		let doMove: boolean = false;
 		let newPosition: Point = new Point(x, y);
 
+		let wasCapture: boolean = false;
+		let captureArgs: PieceCapturedEventArgs = new PieceCapturedEventArgs();
+
 		// If we're able to move there
 		let moveAblePositions: Point[] = this.getMoveablePositions();
 		if (moveAblePositions.some(mp => mp.x === newPosition.x && mp.y === newPosition.y)) {
+
 			// Capture if possible
 			let pieceAlreadyThere: Piece | null = this.game.getPieceAt(newPosition.x, newPosition.y);
 			if (pieceAlreadyThere === null) {
@@ -129,10 +133,16 @@ export abstract class Piece {
 
 				// Can we capture it?
 				if (pieceAlreadyThere.owner !== this.owner) {
+
 					// Capture it
 					pieceAlreadyThere.inPlay = false;
-
 					doMove = true;
+
+					wasCapture = true;
+					captureArgs.capturedAt = new Point(x, y);
+					captureArgs.capturedFrom = this.position;
+					captureArgs.capturedPiece = pieceAlreadyThere;
+					captureArgs.capturingPiece = this;
 				}
 				else {
 					// Once of our pieces is already there
@@ -146,9 +156,26 @@ export abstract class Piece {
 		}
 
 		if (doMove) {
+			// Initialize some event args with original position
+			let args: PieceMovedEventArgs = new PieceMovedEventArgs();
+			args.piece = this;
+			args.movedFrom = this.position;
+
+			// Move
 			this.position = newPosition;
 			this.moveCount++;
-			this.game.onPieceMoved(this);
+
+			// Update event args with new position
+			args.movedTo = this.position;
+
+			// Mark as last piece moved and emit the piece moved event
+			this.game.lastMovedPiece = this;
+			this.game.onPieceMoved.emit(args);
+
+			// Emit capture event if a capture took place
+			if (wasCapture) {
+				this.game.onPieceCaptured.emit(captureArgs);
+			}
 		}
 	}
 }

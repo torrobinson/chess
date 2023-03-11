@@ -2,19 +2,25 @@ import { Piece } from "./piece";
 import { Pawn } from "./pieces/pawn";
 import { Rook } from "./pieces/rook";
 import { Point } from "./point";
-import { PlayerType } from "../enum/playerType";
+import { PlayerType } from "../enum/player-type";
 import { Bishop } from "./pieces/bishop";
 import { Knight } from "./pieces/knight";
 import { Queen } from "./pieces/queen";
 import { King } from "./pieces/king";
+import { EventEmitter } from "../events/event-emitter";
+import { PieceMovedEventArgs } from "../event-args/piece-moved-event-args";
+import { PieceCapturedEventArgs } from "../event-args/piece-captured-event-args";
 
 export class Game {
+	// Events
+	public onPieceMoved: EventEmitter<PieceMovedEventArgs> = new EventEmitter<PieceMovedEventArgs>();
+	public onPieceCaptured: EventEmitter<PieceCapturedEventArgs> = new EventEmitter<PieceCapturedEventArgs>();
+
 	// Actors
 	public pieces: Piece[] = [];
 
 	// State
 	public lastMovedPiece: Piece | null = null;
-
 
 	// Accessors
 	public get capturedPieces(): Piece[] {
@@ -24,7 +30,6 @@ export class Game {
 	public get uncapturedPieces(): Piece[] {
 		return this.pieces.filter((piece: Piece) => piece.inPlay);
 	}
-
 
 	constructor() {
 		this.reset();
@@ -88,9 +93,5 @@ export class Game {
 			new Pawn(this, PlayerType.Black, new Point(7, 6))
 		];
 
-	}
-
-	public onPieceMoved(piece: Piece): void {
-		this.lastMovedPiece = piece;
 	}
 }

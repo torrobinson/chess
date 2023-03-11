@@ -1,4 +1,4 @@
-import { PlayerType } from "../../enum/playerType";
+import { PlayerType } from "../../enum/player-type";
 import { Game } from "../game";
 import { Piece } from "../piece";
 import { Point } from "../point";
