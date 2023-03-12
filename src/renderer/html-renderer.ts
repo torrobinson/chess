@@ -123,6 +123,7 @@ export class HtmlRenderer {
 			// Ignore clicks on enemy pieces
 			if (pieceClicked?.owner !== this.game.getCurrentPlayer()) {
 				// Do nothing!
+				HtmlUtilities.shake(clickedPieceElement);
 			}
 			else {
 

@@ -26,6 +26,7 @@
 		<textarea id="state"></textarea>
 		<button onclick="load('attacks')">Attacks (various)</button>
 		<button onclick="load('passant')">En passant</button>
+		<button onclick="load('capturebug')">Capture Bug</button>
 
 		<script>
 			function load(name) {
@@ -37,6 +38,8 @@
 						case 'passant':
 							json = '[{"x":0,"y":0,"owner":"white","type":"rook"},{"x":1,"y":0,"owner":"white","type":"knight"},{"x":2,"y":0,"owner":"white","type":"bishop"},{"x":3,"y":0,"owner":"white","type":"queen"},{"x":4,"y":0,"owner":"white","type":"king"},{"x":5,"y":0,"owner":"white","type":"bishop"},{"x":6,"y":0,"owner":"white","type":"knight"},{"x":7,"y":0,"owner":"white","type":"rook"},{"x":0,"y":1,"owner":"white","type":"pawn"},{"x":1,"y":1,"owner":"white","type":"pawn"},{"x":2,"y":1,"owner":"white","type":"pawn"},{"x":3,"y":1,"owner":"white","type":"pawn"},{"x":4,"y":1,"owner":"white","type":"pawn"},{"x":5,"y":1,"owner":"white","type":"pawn"},{"x":6,"y":1,"owner":"white","type":"pawn"},{"x":7,"y":1,"owner":"white","type":"pawn"},{"x":0,"y":7,"owner":"black","type":"rook"},{"x":1,"y":7,"owner":"black","type":"knight"},{"x":2,"y":7,"owner":"black","type":"bishop"},{"x":3,"y":7,"owner":"black","type":"queen"},{"x":4,"y":7,"owner":"black","type":"king"},{"x":5,"y":7,"owner":"black","type":"bishop"},{"x":6,"y":7,"owner":"black","type":"knight"},{"x":7,"y":7,"owner":"black","type":"rook"},{"x":0,"y":6,"owner":"black","type":"pawn"},{"x":1,"y":6,"owner":"black","type":"pawn"},{"x":2,"y":6,"owner":"black","type":"pawn"},{"x":3,"y":6,"owner":"black","type":"pawn"},{"x":4,"y":3,"owner":"black","type":"pawn"},{"x":5,"y":6,"owner":"black","type":"pawn"},{"x":6,"y":6,"owner":"black","type":"pawn"},{"x":7,"y":6,"owner":"black","type":"pawn"}]';
 							break;
+						case 'capturebug':
+							json = '[{"x":0,"y":0,"owner":"white","type":"rook"},{"x":1,"y":0,"owner":"white","type":"knight"},{"x":2,"y":0,"owner":"white","type":"bishop"},{"x":3,"y":0,"owner":"white","type":"queen"},{"x":4,"y":0,"owner":"white","type":"king"},{"x":3,"y":2,"owner":"white","type":"bishop"},{"x":6,"y":0,"owner":"white","type":"knight"},{"x":7,"y":0,"owner":"white","type":"rook"},{"x":0,"y":1,"owner":"white","type":"pawn"},{"x":1,"y":1,"owner":"white","type":"pawn"},{"x":2,"y":4,"owner":"white","type":"pawn"},{"x":3,"y":1,"owner":"white","type":"pawn"},{"x":4,"y":4,"owner":"white","type":"pawn"},{"x":5,"y":3,"owner":"white","type":"pawn"},{"x":6,"y":1,"owner":"white","type":"pawn"},{"x":7,"y":4,"owner":"white","type":"pawn"},{"x":0,"y":7,"owner":"black","type":"rook"},{"x":1,"y":7,"owner":"black","type":"knight"},{"x":2,"y":7,"owner":"black","type":"bishop"},{"x":3,"y":5,"owner":"black","type":"queen"},{"x":4,"y":7,"owner":"black","type":"king"},{"x":5,"y":7,"owner":"black","type":"bishop"},{"x":5,"y":5,"owner":"black","type":"knight"},{"x":7,"y":7,"owner":"black","type":"rook"},{"x":0,"y":5,"owner":"black","type":"pawn"},{"x":1,"y":4,"owner":"black","type":"pawn"},{"x":2,"y":5,"owner":"black","type":"pawn"},{"x":3,"y":4,"owner":"black","type":"pawn"},{"x":4,"y":6,"owner":"black","type":"pawn"},{"x":5,"y":6,"owner":"black","type":"pawn"},{"x":6,"y":6,"owner":"black","type":"pawn"},{"x":7,"y":5,"owner":"black","type":"pawn"}]';
 					}
 					let textarea = document.getElementById('state');
 					textarea.value = json;

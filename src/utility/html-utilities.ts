@@ -18,12 +18,19 @@ export abstract class HtmlUtilities {
 	}
 
 	static liveBind(eventType, elementQuerySelector, cb) {
+		//document.removeEventListener(eventType, handler);
 		document.addEventListener(eventType, event => {
 			let el = event.target.closest(elementQuerySelector);
 			if (el) {
 				cb.call(this, el, event);
 			}
-
 		});
+	}
+
+	static shake(el: HTMLElement): void {
+		el.classList.add('shake');
+		setTimeout(() => {
+			el.classList.remove('shake');
+		}, 350);
 	}
 }
