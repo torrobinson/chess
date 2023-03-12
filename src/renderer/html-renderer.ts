@@ -260,6 +260,7 @@ export class HtmlRenderer {
 		if (owner !== null) {
 			query += `.${owner}`;
 		}
+		query += ':not(.captured)';
 		let foundElement: HTMLElement | null = document.querySelector(query);
 
 		return foundElement;

@@ -11,6 +11,10 @@
 $cell-bg-hover: red;
 $cell-size-percentage-of-parent: math.div(100%, 8);
 
+html, body{
+	background-color:#414141;
+}
+
 .shake{
 	animation: horizontal-shaking 350ms infinite;
 }
@@ -21,16 +25,56 @@ $cell-size-percentage-of-parent: math.div(100%, 8);
 }
 
 .board{
+
+	// Constants
 	$height: 8;
 	$width: 8;
 
+	// Common
 	$cellHeightPercent: calc(100% / $height);
 	$cellWidthPercent: calc(100% / $width);
+
+	$paddingForLabels: 24px;
+
+	.files{
+		font-family: sans-serif;
+
+		file{
+			position: absolute;
+			bottom: calc( calc(-1 * $paddingForLabels) + calc(0.5 * $paddingForLabels) - 0.5em - 2px);
+
+			@for $x from 0 through $width {
+				&:nth-child(#{$x}){
+					left: calc(#{$x * $cellWidthPercent - ($cellWidthPercent * 0.5)} - 0.5em);
+				}
+			}
+
+		}
+	}
+
+	.ranks{
+		font-family: sans-serif;
+		
+		rank{
+			//transform: rotate(-90deg);
+			position: absolute;
+			left: calc( calc(-1 * $paddingForLabels) + calc(0.5 * $paddingForLabels) - 0.5em + 2px);
+
+			@for $x from 0 through $width {
+				&:nth-child(#{$x}){
+					bottom: calc(#{$x * $cellWidthPercent - ($cellWidthPercent * 0.5)} - 0.5em);
+				}
+			}
+
+		}
+	}
+
 
 	$highlightColor: #0071ff;
 
 	display: inline-block;
 	position: relative;
+	border: $paddingForLabels solid #a8a8a8;
 
 	$minBoardSizePixels: 300px;
 	$maxBoardSizePixels: 900px;
