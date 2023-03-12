@@ -91,6 +91,11 @@ export class HtmlRenderer {
 			throw 'Piece holder not found';
 		}
 
+		// Clear any existing piece elements
+		document.querySelectorAll('piece').forEach((element: Element) => {
+			element.parentNode?.removeChild(element);
+		});
+
 		// Create the piece elements
 		this.game.pieces.forEach((piece: Piece) => {
 			// Determine sprite
