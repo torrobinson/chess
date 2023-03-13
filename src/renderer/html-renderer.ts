@@ -125,7 +125,7 @@ export class HtmlRenderer {
 			if (pieceClicked?.owner !== this.game.getCurrentPlayer()) {
 				// Do nothing!
 				HtmlUtilities.shake(clickedPieceElement);
-				MediaUtilities.playSound(WellKnownSoundPaths.error);
+				MediaUtilities.playSound(WellKnownSoundPaths.error, 0.2);
 			}
 			else {
 

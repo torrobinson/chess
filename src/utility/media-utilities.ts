@@ -3,8 +3,9 @@ export enum WellKnownSoundPaths {
 	error = '../audio/error.wav',
 }
 export abstract class MediaUtilities {
-	static playSound(sound: WellKnownSoundPaths): void {
-		var audio = new Audio(sound);
+	static playSound(sound: WellKnownSoundPaths, volume: number = 1.0): void {
+		let audio = new Audio(sound);
+		audio.volume = volume;
 		audio.play();
 	}
 }
