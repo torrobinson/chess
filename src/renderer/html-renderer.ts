@@ -1,4 +1,5 @@
 import { HtmlUtilities } from "../utility/html-utilities";
+import { MediaUtilities, WellKnownSoundPaths } from "../utility/media-utilities";
 import { Game } from "../class/game";
 import { Piece } from "../class/piece";
 import { Pawn } from "../class/pieces/pawn";
@@ -124,6 +125,7 @@ export class HtmlRenderer {
 			if (pieceClicked?.owner !== this.game.getCurrentPlayer()) {
 				// Do nothing!
 				HtmlUtilities.shake(clickedPieceElement);
+				MediaUtilities.playSound(WellKnownSoundPaths.error);
 			}
 			else {
 
@@ -195,6 +197,7 @@ export class HtmlRenderer {
 				pieceElement.setAttribute('y', event.movedTo.y.toString());
 			}
 
+			MediaUtilities.playSound(WellKnownSoundPaths.piecePlaced);
 			this.updateIndicators();
 		});
 
